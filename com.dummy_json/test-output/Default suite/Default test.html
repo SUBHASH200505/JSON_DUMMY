@@ -57,9 +57,9 @@ function toggleAllBoxes() {
 <tr>
 <td>Tests passed/Failed/Skipped:</td><td>14/2/0</td>
 </tr><tr>
-<td>Started on:</td><td>Wed Apr 22 09:26:36 IST 2026</td>
+<td>Started on:</td><td>Wed Apr 22 11:44:36 IST 2026</td>
 </tr>
-<tr><td>Total time:</td><td>10 seconds (10996 ms)</td>
+<tr><td>Total time:</td><td>8 seconds (8831 ms)</td>
 </tr><tr>
 <td>Included groups:</td><td></td>
 </tr><tr>
@@ -85,10 +85,10 @@ function toggleAllBoxes() {
 	at org.testng.Assert.assertEquals(Assert.java:1419)
 	at org.testng.Assert.assertEquals(Assert.java:1383)
 	at org.testng.Assert.assertEquals(Assert.java:1429)
-	at stepdefinitions.CartStepDefinition.validateStatus(CartStepDefinition.java:94)
-	at ✽.I validate carts status &quot;404&quot;(classpath:features/cart.feature:20)
-</pre></div><a href='#' onClick='toggleBox("stack-trace1844941220", this, "Click to show all stack frames", "Click to hide stack frames")'>Click to show all stack frames</a>
-<div class='stack-trace' id='stack-trace1844941220'><pre>java.lang.AssertionError: expected [404] but found [200]
+	at stepdefinitions.CartStepDefinition.validateStatus(CartStepDefinition.java:87)
+	at ✽.I validate carts status &quot;404&quot;(classpath:features/Cart.feature:28)
+</pre></div><a href='#' onClick='toggleBox("stack-trace106193777", this, "Click to show all stack frames", "Click to hide stack frames")'>Click to show all stack frames</a>
+<div class='stack-trace' id='stack-trace106193777'><pre>java.lang.AssertionError: expected [404] but found [200]
 	at org.testng.Assert.fail(Assert.java:111)
 	at org.testng.Assert.failNotEquals(Assert.java:1578)
 	at org.testng.Assert.assertEqualsImpl(Assert.java:150)
@@ -96,32 +96,34 @@ function toggleAllBoxes() {
 	at org.testng.Assert.assertEquals(Assert.java:1419)
 	at org.testng.Assert.assertEquals(Assert.java:1383)
 	at org.testng.Assert.assertEquals(Assert.java:1429)
-	at stepdefinitions.CartStepDefinition.validateStatus(CartStepDefinition.java:94)
-	at ✽.I validate carts status &quot;404&quot;(classpath:features/cart.feature:20)
+	at stepdefinitions.CartStepDefinition.validateStatus(CartStepDefinition.java:87)
+	at ✽.I validate carts status &quot;404&quot;(classpath:features/Cart.feature:28)
 </pre></div></td>
 <td>0</td>
 <td>Runner.TestRunner@74235045</td></tr>
 <tr>
-<td title='Runner.TestRunner.runScenario()'><b>runScenario</b><br>Test class: Runner.TestRunner<br>Test method: Runs Cucumber Scenarios<br>Parameters: "Validate UPDATE Carts API", "Carts API Automation"</td>
-<td><div><pre>java.lang.AssertionError: FAILED → Expected: 400 but got: 200 expected [400] but found [200]
+<td title='Runner.TestRunner.runScenario()'><b>runScenario</b><br>Test class: Runner.TestRunner<br>Test method: Runs Cucumber Scenarios<br>Parameters: "Update Cart with Invalid Data", "Carts API Automation"</td>
+<td><div><pre>java.lang.AssertionError: expected [400] but found [200]
 	at org.testng.Assert.fail(Assert.java:111)
 	at org.testng.Assert.failNotEquals(Assert.java:1578)
 	at org.testng.Assert.assertEqualsImpl(Assert.java:150)
 	at org.testng.Assert.assertEquals(Assert.java:132)
 	at org.testng.Assert.assertEquals(Assert.java:1419)
 	at org.testng.Assert.assertEquals(Assert.java:1383)
-	at stepdefinitions.CartStepDefinition.validateResult(CartStepDefinition.java:66)
-	at ✽.I validate carts expected result(classpath:features/cart.feature:33)
-</pre></div><a href='#' onClick='toggleBox("stack-trace955581180", this, "Click to show all stack frames", "Click to hide stack frames")'>Click to show all stack frames</a>
-<div class='stack-trace' id='stack-trace955581180'><pre>java.lang.AssertionError: FAILED → Expected: 400 but got: 200 expected [400] but found [200]
+	at org.testng.Assert.assertEquals(Assert.java:1429)
+	at stepdefinitions.CartStepDefinition.validateStatus(CartStepDefinition.java:87)
+	at ✽.I validate carts status &quot;400&quot;(classpath:features/Cart.feature:70)
+</pre></div><a href='#' onClick='toggleBox("stack-trace635879978", this, "Click to show all stack frames", "Click to hide stack frames")'>Click to show all stack frames</a>
+<div class='stack-trace' id='stack-trace635879978'><pre>java.lang.AssertionError: expected [400] but found [200]
 	at org.testng.Assert.fail(Assert.java:111)
 	at org.testng.Assert.failNotEquals(Assert.java:1578)
 	at org.testng.Assert.assertEqualsImpl(Assert.java:150)
 	at org.testng.Assert.assertEquals(Assert.java:132)
 	at org.testng.Assert.assertEquals(Assert.java:1419)
 	at org.testng.Assert.assertEquals(Assert.java:1383)
-	at stepdefinitions.CartStepDefinition.validateResult(CartStepDefinition.java:66)
-	at ✽.I validate carts expected result(classpath:features/cart.feature:33)
+	at org.testng.Assert.assertEquals(Assert.java:1429)
+	at stepdefinitions.CartStepDefinition.validateStatus(CartStepDefinition.java:87)
+	at ✽.I validate carts status &quot;400&quot;(classpath:features/Cart.feature:70)
 </pre></div></td>
 <td>0</td>
 <td>Runner.TestRunner@74235045</td></tr>
@@ -135,72 +137,72 @@ function toggleAllBoxes() {
 <td><b>Instance</b></td>
 </tr>
 <tr>
-<td title='Runner.TestRunner.runScenario()'><b>runScenario</b><br>Test class: Runner.TestRunner<br>Test method: Runs Cucumber Scenarios<br>Parameters: "Validate GET Carts APIs", "Carts API Automation"</td>
-<td></td>
-<td>0</td>
-<td>Runner.TestRunner@74235045</td></tr>
-<tr>
 <td title='Runner.TestRunner.runScenario()'><b>runScenario</b><br>Test class: Runner.TestRunner<br>Test method: Runs Cucumber Scenarios<br>Parameters: "Validate POST Carts API", "Carts API Automation"</td>
-<td></td>
-<td>0</td>
-<td>Runner.TestRunner@74235045</td></tr>
-<tr>
-<td title='Runner.TestRunner.runScenario()'><b>runScenario</b><br>Test class: Runner.TestRunner<br>Test method: Runs Cucumber Scenarios<br>Parameters: "Validate UPDATE Carts API", "Carts API Automation"</td>
-<td></td>
-<td>0</td>
-<td>Runner.TestRunner@74235045</td></tr>
-<tr>
-<td title='Runner.TestRunner.runScenario()'><b>runScenario</b><br>Test class: Runner.TestRunner<br>Test method: Runs Cucumber Scenarios<br>Parameters: "Validate GET Carts APIs", "Carts API Automation"</td>
-<td></td>
-<td>0</td>
-<td>Runner.TestRunner@74235045</td></tr>
-<tr>
-<td title='Runner.TestRunner.runScenario()'><b>runScenario</b><br>Test class: Runner.TestRunner<br>Test method: Runs Cucumber Scenarios<br>Parameters: "Delete Cart - Valid ID", "Carts API Automation"</td>
-<td></td>
-<td>0</td>
-<td>Runner.TestRunner@74235045</td></tr>
-<tr>
-<td title='Runner.TestRunner.runScenario()'><b>runScenario</b><br>Test class: Runner.TestRunner<br>Test method: Runs Cucumber Scenarios<br>Parameters: "Delete Cart - Another valid ID", "Carts API Automation"</td>
-<td></td>
-<td>0</td>
-<td>Runner.TestRunner@74235045</td></tr>
-<tr>
-<td title='Runner.TestRunner.runScenario()'><b>runScenario</b><br>Test class: Runner.TestRunner<br>Test method: Runs Cucumber Scenarios<br>Parameters: "Validate POST Carts API", "Carts API Automation"</td>
-<td></td>
-<td>0</td>
-<td>Runner.TestRunner@74235045</td></tr>
-<tr>
-<td title='Runner.TestRunner.runScenario()'><b>runScenario</b><br>Test class: Runner.TestRunner<br>Test method: Runs Cucumber Scenarios<br>Parameters: "Validate POST Carts API", "Carts API Automation"</td>
-<td></td>
-<td>0</td>
-<td>Runner.TestRunner@74235045</td></tr>
-<tr>
-<td title='Runner.TestRunner.runScenario()'><b>runScenario</b><br>Test class: Runner.TestRunner<br>Test method: Runs Cucumber Scenarios<br>Parameters: "Validate UPDATE Carts API", "Carts API Automation"</td>
 <td></td>
 <td>1</td>
 <td>Runner.TestRunner@74235045</td></tr>
 <tr>
-<td title='Runner.TestRunner.runScenario()'><b>runScenario</b><br>Test class: Runner.TestRunner<br>Test method: Runs Cucumber Scenarios<br>Parameters: "Validate UPDATE Carts API", "Carts API Automation"</td>
+<td title='Runner.TestRunner.runScenario()'><b>runScenario</b><br>Test class: Runner.TestRunner<br>Test method: Runs Cucumber Scenarios<br>Parameters: "Delete Cart API", "Carts API Automation"</td>
 <td></td>
 <td>0</td>
 <td>Runner.TestRunner@74235045</td></tr>
 <tr>
-<td title='Runner.TestRunner.runScenario()'><b>runScenario</b><br>Test class: Runner.TestRunner<br>Test method: Runs Cucumber Scenarios<br>Parameters: "Delete Cart - Invalid ID", "Carts API Automation"</td>
+<td title='Runner.TestRunner.runScenario()'><b>runScenario</b><br>Test class: Runner.TestRunner<br>Test method: Runs Cucumber Scenarios<br>Parameters: "Validate GET Carts APIs", "Carts API Automation"</td>
 <td></td>
 <td>0</td>
 <td>Runner.TestRunner@74235045</td></tr>
 <tr>
-<td title='Runner.TestRunner.runScenario()'><b>runScenario</b><br>Test class: Runner.TestRunner<br>Test method: Runs Cucumber Scenarios<br>Parameters: "Delete Cart - Invalid format", "Carts API Automation"</td>
+<td title='Runner.TestRunner.runScenario()'><b>runScenario</b><br>Test class: Runner.TestRunner<br>Test method: Runs Cucumber Scenarios<br>Parameters: "Validate GET Carts APIs", "Carts API Automation"</td>
+<td></td>
+<td>0</td>
+<td>Runner.TestRunner@74235045</td></tr>
+<tr>
+<td title='Runner.TestRunner.runScenario()'><b>runScenario</b><br>Test class: Runner.TestRunner<br>Test method: Runs Cucumber Scenarios<br>Parameters: "Delete Cart API", "Carts API Automation"</td>
+<td></td>
+<td>0</td>
+<td>Runner.TestRunner@74235045</td></tr>
+<tr>
+<td title='Runner.TestRunner.runScenario()'><b>runScenario</b><br>Test class: Runner.TestRunner<br>Test method: Runs Cucumber Scenarios<br>Parameters: "Delete Cart API", "Carts API Automation"</td>
 <td></td>
 <td>0</td>
 <td>Runner.TestRunner@74235045</td></tr>
 <tr>
 <td title='Runner.TestRunner.runScenario()'><b>runScenario</b><br>Test class: Runner.TestRunner<br>Test method: Runs Cucumber Scenarios<br>Parameters: "Validate POST Carts API", "Carts API Automation"</td>
 <td></td>
-<td>3</td>
+<td>0</td>
+<td>Runner.TestRunner@74235045</td></tr>
+<tr>
+<td title='Runner.TestRunner.runScenario()'><b>runScenario</b><br>Test class: Runner.TestRunner<br>Test method: Runs Cucumber Scenarios<br>Parameters: "Validate Carts Response Structure", "Carts API Automation"</td>
+<td></td>
+<td>0</td>
+<td>Runner.TestRunner@74235045</td></tr>
+<tr>
+<td title='Runner.TestRunner.runScenario()'><b>runScenario</b><br>Test class: Runner.TestRunner<br>Test method: Runs Cucumber Scenarios<br>Parameters: "Update Cart using Data Table", "Carts API Automation"</td>
+<td></td>
+<td>0</td>
+<td>Runner.TestRunner@74235045</td></tr>
+<tr>
+<td title='Runner.TestRunner.runScenario()'><b>runScenario</b><br>Test class: Runner.TestRunner<br>Test method: Runs Cucumber Scenarios<br>Parameters: "Validate POST Carts API", "Carts API Automation"</td>
+<td></td>
+<td>0</td>
+<td>Runner.TestRunner@74235045</td></tr>
+<tr>
+<td title='Runner.TestRunner.runScenario()'><b>runScenario</b><br>Test class: Runner.TestRunner<br>Test method: Runs Cucumber Scenarios<br>Parameters: "Validate POST Carts API", "Carts API Automation"</td>
+<td></td>
+<td>0</td>
 <td>Runner.TestRunner@74235045</td></tr>
 <tr>
 <td title='Runner.TestRunner.runScenario()'><b>runScenario</b><br>Test class: Runner.TestRunner<br>Test method: Runs Cucumber Scenarios<br>Parameters: "Validate GET Carts APIs", "Carts API Automation"</td>
+<td></td>
+<td>0</td>
+<td>Runner.TestRunner@74235045</td></tr>
+<tr>
+<td title='Runner.TestRunner.runScenario()'><b>runScenario</b><br>Test class: Runner.TestRunner<br>Test method: Runs Cucumber Scenarios<br>Parameters: "Validate Delete Cart Response Fields", "Carts API Automation"</td>
+<td></td>
+<td>1</td>
+<td>Runner.TestRunner@74235045</td></tr>
+<tr>
+<td title='Runner.TestRunner.runScenario()'><b>runScenario</b><br>Test class: Runner.TestRunner<br>Test method: Runs Cucumber Scenarios<br>Parameters: "Delete Cart API", "Carts API Automation"</td>
 <td></td>
 <td>0</td>
 <td>Runner.TestRunner@74235045</td></tr>
