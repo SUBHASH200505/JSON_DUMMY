@@ -1,58 +1,13 @@
 # ---------------------------------------------------------
 # Author : Kishore
 # Module : Recipes
-# Description : Recipes API Testing with all Scenario Types
+# Description : Recipes API Testing using Excel Data Only
 # ---------------------------------------------------------
 
 Feature: Recipes API Automation
 
 # =========================================================
-# NORMAL SCENARIO
-# =========================================================
-
-Scenario: Get All Recipes (Normal Scenario)
-
-    Given I set endpoint "/recipes"
-    When I send GET request
-    Then Response status code should be 200
-
-
-# =========================================================
-# SCENARIO OUTLINE
-# =========================================================
-
-Scenario Outline: Get Recipe by ID (Scenario Outline)
-
-    Given I set endpoint "/recipes/<id>"
-    When I send GET request
-    Then Response status code should be <status>
-
-Examples:
-
-| id    | status |
-| 1     | 200    |
-| 9999  | 404    |
-| abc   | 404    |
-
-
-# =========================================================
-# SCENARIO WITH DATA TABLE
-# =========================================================
-
-Scenario: Add Recipe using Data Table
-
-    Given I set endpoint "/recipes/add"
-
-    When I send POST request with body:
-
-    | name        | ingredients                      | instructions                    |
-    | Test Pizza  | Flour,Cheese,Tomato             | Prepare dough,Add toppings,Bake |
-
-    Then Response status code should be 200
-
-
-# =========================================================
-# SCENARIO WITH EXCEL DATA
+# EXCEL DATA SCENARIO ONLY (27 TEST CASES)
 # =========================================================
 
 Scenario Outline: Validate Recipes API using Excel Data
@@ -65,7 +20,6 @@ Scenario Outline: Validate Recipes API using Excel Data
 Examples:
 
 | TestCaseID |
-
 | TC_Recipes_01_01 |
 | TC_Recipes_01_02 |
 | TC_Recipes_01_03 |
