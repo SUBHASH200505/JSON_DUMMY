@@ -1,7 +1,7 @@
 Feature: Comments API Automation
 
 # =========================================
-# 1️⃣ POST → ADD COMMENT (SCENARIO OUTLINE)
+# POST → ADD COMMENT (SCENARIO OUTLINE)
 # =========================================
 
 Scenario Outline: Validate POST Comments API
@@ -18,7 +18,7 @@ Examples:
  
 
 # =========================================
-# 2️⃣ GET → COMMENTS (SCENARIO OUTLINE)
+# GET → COMMENTS (SCENARIO OUTLINE)
 # =========================================
 
 Scenario Outline: Validate GET Comments APIs
@@ -35,7 +35,7 @@ Examples:
   | GET    | /comments123    | 404    |
 
 # =========================================
-# 3️⃣ GET RESPONSE STRUCTURE (NORMAL SCENARIO)
+# GET RESPONSE STRUCTURE (NORMAL SCENARIO)
 # =========================================
 
 Scenario: Validate Comments Response Structure
@@ -53,7 +53,7 @@ Scenario: Update Comment using Data Table
   And Response body should contain "Updated comment content"
 
 # =========================================
-# 5️⃣ PATCH → PARTIAL UPDATE
+# PATCH → PARTIAL UPDATE
 # =========================================
 
 Scenario: Partial Update Comment
@@ -63,7 +63,7 @@ Scenario: Partial Update Comment
   And Response body should contain "Partially updated comment"
 
 # =========================================
-# 6️⃣ INVALID UPDATE
+# INVALID UPDATE
 # =========================================
 
 Scenario: Update Comment with Invalid ID
@@ -74,7 +74,7 @@ Scenario: Update Comment with Invalid ID
   Then I validate comments status "404"
 
 # =========================================
-# 7️⃣ DELETE → NORMAL SCENARIOS
+# DELETE → NORMAL SCENARIOS
 # =========================================
 
 Scenario Outline: Delete Comment API
@@ -90,7 +90,7 @@ Examples:
   | abc  | 404    |
 
 # =========================================
-# 8️⃣ DELETE RESPONSE VALIDATION
+# DELETE RESPONSE VALIDATION
 # =========================================
 
 Scenario: Validate Delete Response Fields
