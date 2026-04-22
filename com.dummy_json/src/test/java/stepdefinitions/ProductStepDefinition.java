@@ -1,13 +1,14 @@
+
 package stepdefinitions;
 
 import io.cucumber.java.en.*;
+import io.cucumber.datatable.DataTable;
 import io.restassured.response.Response;
 import io.restassured.path.json.JsonPath;
-
 import Utils.*;
 
-import java.util.List;
 import java.util.Map;
+import java.util.List;
 
 import org.testng.Assert;
 
@@ -19,9 +20,9 @@ public class ProductStepDefinition {
     String method;
     String endpoint;
 
-    // =====================================
-    // EXCEL DRIVEN → POST PRODUCT
-    // =====================================
+    // =========================================
+    // EXCEL STEPS
+    // =========================================
 
     @Given("I read products test data {string}")
     public void readProductsData(String testCaseID) {
@@ -31,199 +32,136 @@ public class ProductStepDefinition {
         if (data == null || data.isEmpty()) {
             throw new RuntimeException("No data found for: " + testCaseID);
         }
-
-        System.out.println("TEST DATA: " + data);
     }
 
     @And("I validate products precondition")
     public void validateProductsPrecondition() {
-        System.out.println("Products precondition validated");
+        System.out.println("Precondition OK");
     }
 
     @When("I perform products API request")
-    public void performProductsApiRequest() {
+    public void performProductsRequest() {
 
         method = data.get("method");
         String endpointPath = data.get("endpoint");
-        String requestBody = data.get("testdata");
+        String body = data.get("testdata");
 
         endpoint = ConfiReader.get("base.url") + endpointPath;
 
-        response = ApiUtil.send(method, endpoint, requestBody, null);
+        response = ApiUtil.send(method, endpoint, body, null);
 
-        System.out.println("METHOD: " + method);
-        System.out.println("ENDPOINT: " + endpoint);
-        System.out.println("BODY: " + requestBody);
         System.out.println("RESPONSE: " + response.asString());
     }
 
     @Then("I validate products expected result")
-    public void validateProductsExpectedResult() {
+    public void validateProductsResult() {
 
-        int expectedStatus = Integer.parseInt(data.get("expectedstatus"));
-        int actualStatus = response.getStatusCode();
+        int expected = Integer.parseInt(data.get("expectedstatus"));
+        int actual = response.getStatusCode();
 
-        Assert.assertEquals(
-                actualStatus,
-                expectedStatus,
-                "Status code mismatch"
-        );
-
-        System.out.println("✔ Product Excel Driven Test Passed");
+        Assert.assertEquals(actual, expected);
     }
 
-    // =====================================
-    // INLINE REQUESTS → GET / DELETE / PUT / PATCH
-    // =====================================
+    // =========================================
+    // INLINE REQUESTS
+    // =========================================
 
     @Given("I set products request {string} {string}")
-    public void iSetProductsRequest(String reqMethod, String reqEndpoint) {
+    public void setProductsRequest(String m, String e) {
 
-        method = reqMethod;
-        endpoint = ConfiReader.get("base.url") + reqEndpoint;
-
-        System.out.println("METHOD: " + method);
-        System.out.println("ENDPOINT: " + endpoint);
+        method = m;
+        endpoint = ConfiReader.get("base.url") + e;
     }
 
     @When("I send products request")
-    public void iSendProductsRequest() {
+    public void sendProductsRequest() {
 
         response = ApiUtil.send(method, endpoint, null, null);
-
-        System.out.println("RESPONSE: " + response.asString());
     }
 
     @Then("I validate products status {string}")
-    public void iValidateProductsStatus(String expectedStatus) {
+    public void validateProductsStatus(String status) {
 
-        int expected = Integer.parseInt(expectedStatus);
+        int expected = Integer.parseInt(status);
         int actual = response.getStatusCode();
 
-        Assert.assertEquals(
-                actual,
-                expected,
-                "Products status validation failed"
-        );
-
-        System.out.println("✔ Status Validation Passed");
+        Assert.assertEquals(actual, expected);
     }
 
-    // =====================================
-    // RESPONSE STRUCTURE VALIDATION
-    // =====================================
+    // =========================================
+    // RESPONSE STRUCTURE
+    // =========================================
 
     @Then("Response body should contain products array")
-    public void responseBodyShouldContainProductsArray() {
+    public void validateProductsArray() {
 
         JsonPath json = response.jsonPath();
         List<?> products = json.getList("products");
 
-        Assert.assertNotNull(products, "Products array not found");
-        Assert.assertTrue(products.size() > 0, "Products array is empty");
-
-        System.out.println("✔ Products array validated");
+        Assert.assertNotNull(products);
+        Assert.assertTrue(products.size() > 0);
     }
 
-    @And("Each product should have {string}, {string}, {string}, {string}")
-    public void eachProductShouldHaveFields(
-            String field1,
-            String field2,
-            String field3,
-            String field4) {
+    @Then("Each product should have {string}, {string}, {string}, {string}")
+    public void validateProductFields(String f1, String f2, String f3, String f4) {
 
         JsonPath json = response.jsonPath();
 
-        Assert.assertNotNull(json.get("products[0]." + field1));
-        Assert.assertNotNull(json.get("products[0]." + field2));
-        Assert.assertNotNull(json.get("products[0]." + field3));
-        Assert.assertNotNull(json.get("products[0]." + field4));
-
-        System.out.println("✔ Product fields validated");
+        Assert.assertNotNull(json.get("products[0]." + f1));
+        Assert.assertNotNull(json.get("products[0]." + f2));
+        Assert.assertNotNull(json.get("products[0]." + f3));
+        Assert.assertNotNull(json.get("products[0]." + f4));
     }
 
-    // =====================================
-    // PUT REQUEST WITH DATA TABLE
-    // =====================================
+    // =========================================
+    // PUT (FIXED JSON + MATCHED STEP)
+    // =========================================
 
-    @When("I send PUT request with body:")
-    public void iSendPutRequestWithBody(io.cucumber.datatable.DataTable table) {
+    @When("I send products PUT request with body:")
+    public void sendProductsPutRequest(DataTable table) {
 
-        Map<String, String> requestBody =
-                table.asMaps(String.class, String.class).get(0);
+        Map<String, String> map = table.asMaps().get(0);
 
-        String jsonBody = "";
+        String jsonBody = "{";
 
-        // title update
-        if (requestBody.containsKey("title")) {
-
-            jsonBody =
-                    "{ \"title\": \"" + requestBody.get("title") + "\" }";
+        if (map.containsKey("title")) {
+            jsonBody += "\"title\":\"" + map.get("title") + "\",";
         }
 
-        // body/postId/userId (for generic support)
-        else if (requestBody.containsKey("body")) {
-
-            jsonBody =
-                    "{ "
-                            + "\"body\": \"" + requestBody.get("body") + "\", "
-                            + "\"postId\": " + requestBody.get("postId") + ", "
-                            + "\"userId\": " + requestBody.get("userId")
-                            + " }";
+        if (map.containsKey("price")) {
+            jsonBody += "\"price\":" + map.get("price") + ",";
         }
 
-        // invalid price validation
-        else if (requestBody.containsKey("price")) {
+        jsonBody = jsonBody.replaceAll(",$", "") + "}";
 
-            jsonBody =
-                    "{ \"price\": \"" + requestBody.get("price") + "\" }";
-        }
+        response = ApiUtil.send("PUT", endpoint, jsonBody, null);
 
-        response = ApiUtil.send(
-                "PUT",
-                endpoint,
-                jsonBody,
-                null
-        );
-
-        System.out.println("REQUEST BODY: " + jsonBody);
+        System.out.println("PUT BODY: " + jsonBody);
         System.out.println("PUT RESPONSE: " + response.asString());
     }
 
-    // =====================================
-    // PATCH REQUEST
-    // =====================================
+    // =========================================
+    // PATCH
+    // =========================================
 
-    @When("I send PATCH request with body {string}")
-    public void iSendPatchRequestWithBody(String updatedText) {
+    @When("I send products PATCH request with body {string}")
+    public void sendProductsPatchRequest(String text) {
 
-        String requestBody =
-                "{ \"title\": \"" + updatedText + "\" }";
+        String requestBody = "{ \"title\": \"" + text + "\" }";
 
-        response = ApiUtil.send(
-                "PATCH",
-                endpoint,
-                requestBody,
-                null
-        );
+        response = ApiUtil.send("PATCH", endpoint, requestBody, null);
 
         System.out.println("PATCH RESPONSE: " + response.asString());
     }
 
-    // =====================================
-    // COMMON RESPONSE BODY VALIDATION
-    // =====================================
+    // =========================================
+    // UNIQUE RESPONSE VALIDATION
+    // =========================================
 
-    @And("Response body should contain {string}")
-    public void responseBodyShouldContain(String expectedText) {
+    @Then("Products response should contain {string}")
+    public void validateProductsResponseContains(String text) {
 
-        String responseBody = response.asString();
-
-        Assert.assertTrue(
-                responseBody.contains(expectedText),
-                "Response body does not contain: " + expectedText
-        );
-
-        System.out.println("✔ Response contains: " + expectedText);
+        Assert.assertTrue(response.asString().contains(text),
+                "Response does not contain: " + text);
     }
 }
