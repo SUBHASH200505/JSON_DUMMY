@@ -7,7 +7,7 @@
 Feature: Recipes API Automation
 
 # =========================================================
-# 1️⃣ NORMAL SCENARIO
+# NORMAL SCENARIO
 # =========================================================
 
 Scenario: Get All Recipes (Normal Scenario)
@@ -18,7 +18,7 @@ Scenario: Get All Recipes (Normal Scenario)
 
 
 # =========================================================
-# 2️⃣ SCENARIO OUTLINE
+# SCENARIO OUTLINE
 # =========================================================
 
 Scenario Outline: Get Recipe by ID (Scenario Outline)
@@ -36,7 +36,7 @@ Examples:
 
 
 # =========================================================
-# 3️⃣ SCENARIO WITH DATA TABLE
+# SCENARIO WITH DATA TABLE
 # =========================================================
 
 Scenario: Add Recipe using Data Table
@@ -52,7 +52,7 @@ Scenario: Add Recipe using Data Table
 
 
 # =========================================================
-# 4️⃣ SCENARIO WITH EXCEL DATA
+# SCENARIO WITH EXCEL DATA
 # =========================================================
 
 Scenario Outline: Validate Recipes API using Excel Data
