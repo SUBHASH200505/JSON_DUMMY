@@ -1,7 +1,10 @@
 package stepdefinitions;
 
 import io.cucumber.java.en.*;
+import io.cucumber.datatable.DataTable;
 import io.restassured.response.Response;
+import io.restassured.path.json.JsonPath;
+
 import Utils.*;
 
 import java.util.Map;
@@ -43,17 +46,9 @@ public class TodosStepDefinition {
         String endpointPath = data.getOrDefault("endpoint", "/todos");
         String body = data.get("testdata");
 
-        // ✅ FIXED CLASS NAME
         endpoint = ConfiReader.get("base.url") + endpointPath;
 
-        System.out.println("METHOD: " + method);
-        System.out.println("ENDPOINT: " + endpoint);
-        System.out.println("BODY: " + body);
-
-        // ✅ FIXED send() call
         response = ApiUtil.send(method, endpoint, body, null);
-
-        System.out.println("RESPONSE: " + response.asString());
     }
 
     @Then("I validate todos expected result")
@@ -62,10 +57,7 @@ public class TodosStepDefinition {
         int expected = Integer.parseInt(data.get("expectedstatus"));
         int actual = response.getStatusCode();
 
-        Assert.assertEquals(actual, expected,
-                "FAILED → Expected: " + expected + " but got: " + actual);
-
-        System.out.println("✔ Excel Test Passed");
+        Assert.assertEquals(actual, expected);
     }
 
     // =========================
@@ -91,7 +83,61 @@ public class TodosStepDefinition {
         int actual = response.getStatusCode();
 
         Assert.assertEquals(actual, expected);
+    }
 
-        System.out.println("✔ Inline Test Passed");
+    // =========================
+    // RESPONSE VALIDATION
+    // =========================
+    @Then("Response body should contain todos array")
+    public void validateTodosArray() {
+        Assert.assertTrue(response.asString().contains("todos"));
+    }
+
+    @Then("Each todo should have {string}, {string}, {string}, {string}")
+    public void validateFields(String f1, String f2, String f3, String f4) {
+
+        JsonPath json = response.jsonPath();
+
+        Assert.assertNotNull(json.get("todos[0]." + f1));
+        Assert.assertNotNull(json.get("todos[0]." + f2));
+        Assert.assertNotNull(json.get("todos[0]." + f3));
+        Assert.assertNotNull(json.get("todos[0]." + f4));
+    }
+
+    // =========================
+    // PUT (DataTable)
+    // =========================
+    @When("I send PUT request with body:")
+    public void sendPut(DataTable table) {
+
+        Map<String, String> map = table.asMaps().get(0);
+
+        String body = "{"
+                + "\"todo\":\"" + map.get("todo") + "\","
+                + "\"completed\":" + map.get("completed") + ","
+                + "\"userId\":" + map.get("userId")
+                + "}";
+
+        response = ApiUtil.send("PUT", endpoint, body, null);
+    }
+
+    // =========================
+    // PATCH
+    // =========================
+    @When("I send PATCH request with body {string}")
+    public void sendPatch(String text) {
+
+        String body = "{\"todo\":\"" + text + "\"}";
+
+        response = ApiUtil.send("PATCH", endpoint, body, null);
+    }
+
+    // =========================
+    // GENERIC RESPONSE CHECK
+    // =========================
+    @Then("Response body should contain {string}")
+    public void validateContains(String text) {
+
+        Assert.assertTrue(response.asString().contains(text));
     }
 }
