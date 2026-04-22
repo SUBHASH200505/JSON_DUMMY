@@ -20,7 +20,9 @@ public class CartStepDefinition {
     String endpoint;
     String token;
 
-   
+    // =========================================
+    // EXCEL BASED STEPS
+    // =========================================
 
     @Given("I read carts test data {string}")
     public void readData(String testCaseID) {
@@ -32,7 +34,6 @@ public class CartStepDefinition {
         }
 
         token = data.get("token");
-
         System.out.println("DATA: " + data);
     }
 
@@ -65,7 +66,10 @@ public class CartStepDefinition {
         System.out.println("✔ Excel Test Passed");
     }
 
-   
+    // =========================================
+    // INLINE REQUESTS
+    // =========================================
+
     @Given("I set carts request {string} {string}")
     public void setRequest(String m, String e) {
         method = m;
@@ -88,8 +92,11 @@ public class CartStepDefinition {
         System.out.println("✔ Inline Test Passed");
     }
 
-  
-    @When("I send PUT request with body:")
+    // =========================================
+    // PUT (DATA TABLE) — FIXED
+    // =========================================
+
+    @When("I send carts PUT request with body:")
     public void sendPutRequest(DataTable dataTable) {
 
         Map<String, String> bodyMap = dataTable.asMaps().get(0);
@@ -120,21 +127,20 @@ public class CartStepDefinition {
         System.out.println("PUT RESPONSE: " + response.asString());
     }
 
-   
+    // =========================================
+    // RESPONSE VALIDATION (MODULE-SPECIFIC)
+    // =========================================
 
-    @Then("Response body should contain {string}")
-    public void validateResponseContains(String expectedText) {
+    @Then("Carts response should contain {string}")
+    public void validateCartsResponse(String text) {
 
-        String responseBody = response.asString();
-
-        if (method.equalsIgnoreCase("PUT")) {
-            System.out.println("Skipping validation for PUT (API doesn't echo data)");
-            return;
-        }
-
-        Assert.assertTrue(responseBody.contains(expectedText),
-                "Response does not contain: " + expectedText);
+        Assert.assertTrue(response.asString().contains(text),
+                "Response does not contain: " + text);
     }
+
+    // =========================================
+    // RESPONSE STRUCTURE
+    // =========================================
 
     @Then("Response body should contain carts array")
     public void validateCartsArray() {
@@ -160,5 +166,3 @@ public class CartStepDefinition {
         }
     }
 }
-
-

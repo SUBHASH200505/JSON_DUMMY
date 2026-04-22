@@ -1,11 +1,11 @@
 package stepdefinitions;
 
 import io.cucumber.java.en.*;
+import io.cucumber.datatable.DataTable;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 
-import Utils.ExcelUtil;
-import Utils.ApiUtil;
+import Utils.*;
 
 import java.util.Map;
 
@@ -15,14 +15,61 @@ public class RecipeStepDefinition {
     Map<String, String> testData;
     Response response;
 
-    // ===============================
-    // HARD-SET BASE URI HERE
-    // ===============================
+    String endpoint;
+
+    // =========================================
+    // NORMAL / OUTLINE STEPS
+    // =========================================
+
+    @Given("I set endpoint {string}")
+    public void setEndpoint(String ep) {
+
+        RestAssured.baseURI = "https://dummyjson.com";
+        endpoint = ep;
+    }
+
+    @When("I send GET request")
+    public void sendGetRequest() {
+
+        response = ApiUtil.send("GET", endpoint, "", "");
+    }
+
+    @Then("Response status code should be {int}")
+    public void validateStatus(int status) {
+
+        int actual = response.getStatusCode();
+
+        if (actual != status) {
+            throw new AssertionError(
+                    "Expected: " + status + " but got: " + actual);
+        }
+    }
+
+    // =========================================
+    // DATA TABLE POST
+    // =========================================
+
+    @When("I send POST request with body:")
+    public void sendPostRequest(DataTable table) {
+
+        Map<String, String> map = table.asMaps().get(0);
+
+        String jsonBody = "{"
+                + "\"name\":\"" + map.get("name") + "\","
+                + "\"ingredients\":\"" + map.get("ingredients") + "\","
+                + "\"instructions\":\"" + map.get("instructions") + "\""
+                + "}";
+
+        response = ApiUtil.send("POST", endpoint, jsonBody, "");
+    }
+
+    // =========================================
+    // EXCEL STEPS
+    // =========================================
 
     @Given("I read test data {string}")
     public void read_test_data(String id) {
 
-        // ✅ Hard-coded base URI
         RestAssured.baseURI = "https://dummyjson.com";
 
         testCaseID = id;
@@ -30,144 +77,44 @@ public class RecipeStepDefinition {
         testData = ExcelUtil.getData(testCaseID);
 
         if (testData == null || testData.isEmpty()) {
-
             throw new RuntimeException(
-                    "Test data NOT found for: "
-                            + testCaseID);
+                    "Test data NOT found for: " + testCaseID);
         }
-
-        System.out.println("\n=================================");
-        System.out.println("Running TestCase: " + testCaseID);
-        System.out.println("Test Data: " + testData);
     }
-
-    // ===============================
-    // PRECONDITION
-    // ===============================
 
     @Given("I validate precondition")
     public void validate_precondition() {
 
         if (testData == null) {
-
             throw new RuntimeException(
-                    "Precondition Failed for: "
-                            + testCaseID);
+                    "Precondition Failed for: " + testCaseID);
         }
     }
-
-    // ===============================
-    // PERFORM REQUEST
-    // ===============================
 
     @When("I perform API request")
     public void perform_api_request() {
 
-        String method =
-                testData.get("method");
+        String method = testData.getOrDefault("method", "GET");
+        String ep = testData.get("endpoint");
+        String body = testData.getOrDefault("testdata", "");
+        String token = testData.getOrDefault("token", "");
 
-        String endpoint =
-                testData.get("endpoint");
-
-        String body =
-                testData.get("testdata");
-
-        String token =
-                testData.get("token");
-
-        // Defaults
-
-        if (method == null || method.isEmpty()) {
-            method = "GET";
-        }
-
-        if (endpoint == null || endpoint.isEmpty()) {
-
-            throw new RuntimeException(
-                    "Endpoint EMPTY for: "
-                            + testCaseID);
-        }
-
-        if (body == null) {
-            body = "";
-        }
-
-        if (token == null) {
-            token = "";
-        }
-
-        System.out.println("METHOD   = " + method);
-        System.out.println("ENDPOINT = " + endpoint);
-        System.out.println("BODY     = " + body);
-
-        try {
-
-            response =
-                    ApiUtil.send(
-                            method,
-                            endpoint,
-                            body,
-                            token);
-
-        }
-
-        catch (Exception e) {
-
-            System.out.println(
-                    "API Exception for: "
-                            + testCaseID);
-
-            e.printStackTrace();
-
-            throw new RuntimeException(
-                    "Request Failed for: "
-                            + testCaseID);
-        }
+        response = ApiUtil.send(method, ep, body, token);
     }
-
-    // ===============================
-    // VALIDATE RESPONSE
-    // ===============================
 
     @Then("I validate expected result")
     public void validate_expected_result() {
 
-        if (response == null) {
+        int expected =
+                Integer.parseInt(testData.get("expectedstatus"));
 
-            throw new RuntimeException(
-                    "Response NULL for: "
-                            + testCaseID);
-        }
+        int actual = response.getStatusCode();
 
-        int expectedStatus =
-                Integer.parseInt(
-                        testData.get("expectedstatus"));
-
-        int actualStatus =
-                response.getStatusCode();
-
-        System.out.println(
-                "Expected Status: "
-                        + expectedStatus);
-
-        System.out.println(
-                "Actual Status: "
-                        + actualStatus);
-
-        if (actualStatus != expectedStatus) {
-
+        if (actual != expected) {
             throw new AssertionError(
-
-                    "FAILED TestCase: "
-                            + testCaseID
-                            + " | Expected: "
-                            + expectedStatus
-                            + " | Actual: "
-                            + actualStatus);
+                    "FAILED " + testCaseID +
+                            " | Expected: " + expected +
+                            " | Actual: " + actual);
         }
-
-        System.out.println(
-                "PASSED TestCase: "
-                        + testCaseID);
     }
 }

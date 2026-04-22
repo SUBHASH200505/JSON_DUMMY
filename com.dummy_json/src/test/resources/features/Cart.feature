@@ -11,11 +11,11 @@ Scenario Outline: Validate POST Carts API
   Then I validate carts expected result
 
 Examples:
-  | TestCaseID        |
-  | TC_Carts_01_01    |
-  | TC_Carts_01_02    |
-  | TC_Carts_01_03    |
-  | TC_Carts_01_04    |
+  | TestCaseID     |
+  | TC_Carts_01_01 |
+  | TC_Carts_01_02 |
+  | TC_Carts_01_03 |
+  | TC_Carts_01_04 |
 
 
 # =========================================
@@ -32,7 +32,7 @@ Examples:
   | GET    | /carts       | 200    |
   | GET    | /carts/1     | 200    |
   | GET    | /carts/99999 | 404    |
-  | GET    | /carts?limit=-5   | 404    |
+  | GET    | /carts?limit=-5  | 404    |
 
 
 # =========================================
@@ -52,7 +52,7 @@ Scenario: Validate Carts Response Structure
 
 Scenario: Update Cart using Data Table
   Given I set carts request "PUT" "/carts/1"
-  When I send PUT request with body:
+  When I send carts PUT request with body:
     | products                | total | userId |
     | [{"id":1,"quantity":3}] | 500   | 5      |
   Then I validate carts status "200"
@@ -64,7 +64,7 @@ Scenario: Update Cart using Data Table
 
 Scenario: Update Cart with Invalid Data
   Given I set carts request "PUT" "/carts/1"
-  When I send PUT request with body:
+  When I send carts PUT request with body:
     | quantity |
     | abc      |
   Then I validate carts status "400"
@@ -94,5 +94,5 @@ Examples:
 Scenario: Validate Delete Cart Response Fields
   Given I set carts request "DELETE" "/carts/1"
   When I send carts request
-  Then Response body should contain "isDeleted"
-  And Response body should contain "deletedOn"
+  Then Carts response should contain "isDeleted"
+  And Carts response should contain "deletedOn"

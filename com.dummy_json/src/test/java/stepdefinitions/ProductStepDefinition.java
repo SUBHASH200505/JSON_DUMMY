@@ -1,17 +1,13 @@
 package stepdefinitions;
 
 import io.cucumber.java.en.*;
+import io.cucumber.datatable.DataTable;
 import io.restassured.response.Response;
 import io.restassured.path.json.JsonPath;
-
-<<<<<<< HEAD
-import utils.*;
-=======
 import Utils.*;
->>>>>>> product
 
-import java.util.List;
 import java.util.Map;
+import java.util.List;
 
 import org.testng.Assert;
 
@@ -23,363 +19,148 @@ public class ProductStepDefinition {
     String method;
     String endpoint;
 
-<<<<<<< HEAD
-    // =========================
-    // EXCEL DRIVEN
-    // =========================
-
-    @Given("I read products test data {string}")
-    public void readData(String testCaseID) {
-=======
-    // =====================================
-    // EXCEL DRIVEN → POST PRODUCT
-    // =====================================
+    // =========================================
+    // EXCEL STEPS
+    // =========================================
 
     @Given("I read products test data {string}")
     public void readProductsData(String testCaseID) {
->>>>>>> product
 
         data = ExcelUtil.getData(testCaseID);
 
         if (data == null || data.isEmpty()) {
-<<<<<<< HEAD
-            throw new RuntimeException("No data found for " + testCaseID);
-        }
-
-        System.out.println("DATA: " + data);
-    }
-
-    @And("I validate products precondition")
-    public void validatePrecondition() {
-        System.out.println("Precondition OK");
-    }
-
-    @When("I perform products API request")
-    public void performRequest() {
-
-        method = data.getOrDefault("method", "GET").trim();
-        String endpointPath = data.getOrDefault("endpoint", "/products").trim();
-        String body = data.get("testdata");
-
-        endpoint = ConfiReader.get("base.url") + endpointPath;
-
-        System.out.println("METHOD: " + method);
-        System.out.println("ENDPOINT: " + endpoint);
-        System.out.println("BODY: " + body);
-
-        // ✅ FIXED HERE
-        response = ApiUtil.send(method, endpoint, body, null);
-
-        if (response == null) {
-            throw new RuntimeException("API response is null");
-        }
-
-=======
             throw new RuntimeException("No data found for: " + testCaseID);
         }
-
-        System.out.println("TEST DATA: " + data);
     }
 
     @And("I validate products precondition")
     public void validateProductsPrecondition() {
-        System.out.println("Products precondition validated");
+        System.out.println("Precondition OK");
     }
 
     @When("I perform products API request")
-    public void performProductsApiRequest() {
+    public void performProductsRequest() {
 
         method = data.get("method");
         String endpointPath = data.get("endpoint");
-        String requestBody = data.get("testdata");
+        String body = data.get("testdata");
 
         endpoint = ConfiReader.get("base.url") + endpointPath;
 
-        response = ApiUtil.send(method, endpoint, requestBody, null);
+        response = ApiUtil.send(method, endpoint, body, null);
 
-        System.out.println("METHOD: " + method);
-        System.out.println("ENDPOINT: " + endpoint);
-        System.out.println("BODY: " + requestBody);
->>>>>>> product
         System.out.println("RESPONSE: " + response.asString());
     }
 
     @Then("I validate products expected result")
-<<<<<<< HEAD
-    public void validateResult() {
+    public void validateProductsResult() {
 
-        int expected = Integer.parseInt(data.getOrDefault("expectedstatus", "200"));
+        int expected = Integer.parseInt(data.get("expectedstatus"));
         int actual = response.getStatusCode();
 
-        Assert.assertEquals(actual, expected,
-                "FAILED → Expected: " + expected + " but got: " + actual);
-
-        JsonPath json = response.jsonPath();
-
-        String key = data.get("expectedkey");
-        String value = data.get("expectedvalue");
-
-        // ================= PRODUCT LIST =================
-        try {
-            List<?> productList = json.getList("products");
-
-            if (productList != null) {
-
-                System.out.println("Validating PRODUCT LIST...");
-
-                if ("present".equalsIgnoreCase(value)) {
-                    Assert.assertTrue(productList.size() > 0, "Product list is empty");
-                }
-
-                if (key != null && !key.isEmpty()) {
-                    Object val = json.get("products[0]." + key);
-                    Assert.assertNotNull(val, "Missing key: " + key);
-                }
-
-                return;
-            }
-        } catch (Exception ignored) {}
-
-        // ================= CATEGORY LIST =================
-        if (response.asString().trim().startsWith("[")) {
-
-            System.out.println("Validating CATEGORY LIST...");
-
-            List<?> categories = json.getList("$");
-            Assert.assertTrue(categories.size() > 0, "Category list is empty");
-            return;
-        }
-
-        // ================= SINGLE PRODUCT =================
-        if (actual == 200 || actual == 201) {
-
-            System.out.println("Validating PRODUCT OBJECT...");
-
-            if (key != null && !key.isEmpty()) {
-
-                Object actualValue = json.get(key);
-                Assert.assertNotNull(actualValue, "Key not found: " + key);
-
-                if (value != null && !value.isEmpty()) {
-
-                    if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false")) {
-
-                        Assert.assertEquals(
-                                Boolean.parseBoolean(value),
-                                actualValue,
-                                "Boolean mismatch"
-                        );
-
-                    } else {
-
-                        Assert.assertEquals(
-                                String.valueOf(actualValue),
-                                value,
-                                "Value mismatch"
-                        );
-                    }
-                }
-            }
-        }
-
-        System.out.println("✔ Product Excel Test Passed");
+        Assert.assertEquals(actual, expected);
     }
 
-    // =========================
-    // INLINE (GET / DELETE)
-    // =========================
+    // =========================================
+    // INLINE REQUESTS
+    // =========================================
 
     @Given("I set products request {string} {string}")
-    public void setRequest(String m, String e) {
+    public void setProductsRequest(String m, String e) {
 
         method = m;
         endpoint = ConfiReader.get("base.url") + e;
     }
 
     @When("I send products request")
-    public void sendRequest() {
+    public void sendProductsRequest() {
 
-        // ✅ FIXED HERE ALSO
         response = ApiUtil.send(method, endpoint, null, null);
     }
 
     @Then("I validate products status {string}")
-    public void validateStatus(String status) {
+    public void validateProductsStatus(String status) {
 
         int expected = Integer.parseInt(status);
         int actual = response.getStatusCode();
 
         Assert.assertEquals(actual, expected);
-
-        System.out.println("✔ Inline Product Test Passed");
-=======
-    public void validateProductsExpectedResult() {
-
-        int expectedStatus = Integer.parseInt(data.get("expectedstatus"));
-        int actualStatus = response.getStatusCode();
-
-        Assert.assertEquals(
-                actualStatus,
-                expectedStatus,
-                "Status code mismatch"
-        );
-
-        System.out.println("✔ Product Excel Driven Test Passed");
     }
 
-    // =====================================
-    // INLINE REQUESTS → GET / DELETE / PUT / PATCH
-    // =====================================
-
-    @Given("I set products request {string} {string}")
-    public void iSetProductsRequest(String reqMethod, String reqEndpoint) {
-
-        method = reqMethod;
-        endpoint = ConfiReader.get("base.url") + reqEndpoint;
-
-        System.out.println("METHOD: " + method);
-        System.out.println("ENDPOINT: " + endpoint);
-    }
-
-    @When("I send products request")
-    public void iSendProductsRequest() {
-
-        response = ApiUtil.send(method, endpoint, null, null);
-
-        System.out.println("RESPONSE: " + response.asString());
-    }
-
-    @Then("I validate products status {string}")
-    public void iValidateProductsStatus(String expectedStatus) {
-
-        int expected = Integer.parseInt(expectedStatus);
-        int actual = response.getStatusCode();
-
-        Assert.assertEquals(
-                actual,
-                expected,
-                "Products status validation failed"
-        );
-
-        System.out.println("✔ Status Validation Passed");
-    }
-
-    // =====================================
-    // RESPONSE STRUCTURE VALIDATION
-    // =====================================
+    // =========================================
+    // RESPONSE STRUCTURE
+    // =========================================
 
     @Then("Response body should contain products array")
-    public void responseBodyShouldContainProductsArray() {
+    public void validateProductsArray() {
 
         JsonPath json = response.jsonPath();
         List<?> products = json.getList("products");
 
-        Assert.assertNotNull(products, "Products array not found");
-        Assert.assertTrue(products.size() > 0, "Products array is empty");
-
-        System.out.println("✔ Products array validated");
+        Assert.assertNotNull(products);
+        Assert.assertTrue(products.size() > 0);
     }
 
-    @And("Each product should have {string}, {string}, {string}, {string}")
-    public void eachProductShouldHaveFields(
-            String field1,
-            String field2,
-            String field3,
-            String field4) {
+    @Then("Each product should have {string}, {string}, {string}, {string}")
+    public void validateProductFields(String f1, String f2, String f3, String f4) {
 
         JsonPath json = response.jsonPath();
 
-        Assert.assertNotNull(json.get("products[0]." + field1));
-        Assert.assertNotNull(json.get("products[0]." + field2));
-        Assert.assertNotNull(json.get("products[0]." + field3));
-        Assert.assertNotNull(json.get("products[0]." + field4));
-
-        System.out.println("✔ Product fields validated");
+        Assert.assertNotNull(json.get("products[0]." + f1));
+        Assert.assertNotNull(json.get("products[0]." + f2));
+        Assert.assertNotNull(json.get("products[0]." + f3));
+        Assert.assertNotNull(json.get("products[0]." + f4));
     }
 
-    // =====================================
-    // PUT REQUEST WITH DATA TABLE
-    // =====================================
+    // =========================================
+    // PUT (FIXED JSON + MATCHED STEP)
+    // =========================================
 
-    @When("I send PUT request with body:")
-    public void iSendPutRequestWithBody(io.cucumber.datatable.DataTable table) {
+    @When("I send products PUT request with body:")
+    public void sendProductsPutRequest(DataTable table) {
 
-        Map<String, String> requestBody =
-                table.asMaps(String.class, String.class).get(0);
+        Map<String, String> map = table.asMaps().get(0);
 
-        String jsonBody = "";
+        String jsonBody = "{";
 
-        // title update
-        if (requestBody.containsKey("title")) {
-
-            jsonBody =
-                    "{ \"title\": \"" + requestBody.get("title") + "\" }";
+        if (map.containsKey("title")) {
+            jsonBody += "\"title\":\"" + map.get("title") + "\",";
         }
 
-        // body/postId/userId (for generic support)
-        else if (requestBody.containsKey("body")) {
-
-            jsonBody =
-                    "{ "
-                            + "\"body\": \"" + requestBody.get("body") + "\", "
-                            + "\"postId\": " + requestBody.get("postId") + ", "
-                            + "\"userId\": " + requestBody.get("userId")
-                            + " }";
+        if (map.containsKey("price")) {
+            jsonBody += "\"price\":" + map.get("price") + ",";
         }
 
-        // invalid price validation
-        else if (requestBody.containsKey("price")) {
+        jsonBody = jsonBody.replaceAll(",$", "") + "}";
 
-            jsonBody =
-                    "{ \"price\": \"" + requestBody.get("price") + "\" }";
-        }
+        response = ApiUtil.send("PUT", endpoint, jsonBody, null);
 
-        response = ApiUtil.send(
-                "PUT",
-                endpoint,
-                jsonBody,
-                null
-        );
-
-        System.out.println("REQUEST BODY: " + jsonBody);
+        System.out.println("PUT BODY: " + jsonBody);
         System.out.println("PUT RESPONSE: " + response.asString());
     }
 
-    // =====================================
-    // PATCH REQUEST
-    // =====================================
+    // =========================================
+    // PATCH
+    // =========================================
 
-    @When("I send PATCH request with body {string}")
-    public void iSendPatchRequestWithBody(String updatedText) {
+    @When("I send products PATCH request with body {string}")
+    public void sendProductsPatchRequest(String text) {
 
-        String requestBody =
-                "{ \"title\": \"" + updatedText + "\" }";
+        String requestBody = "{ \"title\": \"" + text + "\" }";
 
-        response = ApiUtil.send(
-                "PATCH",
-                endpoint,
-                requestBody,
-                null
-        );
+        response = ApiUtil.send("PATCH", endpoint, requestBody, null);
 
         System.out.println("PATCH RESPONSE: " + response.asString());
     }
 
-    // =====================================
-    // COMMON RESPONSE BODY VALIDATION
-    // =====================================
+    // =========================================
+    // UNIQUE RESPONSE VALIDATION
+    // =========================================
 
-    @And("Response body should contain {string}")
-    public void responseBodyShouldContain(String expectedText) {
+    @Then("Products response should contain {string}")
+    public void validateProductsResponseContains(String text) {
 
-        String responseBody = response.asString();
-
-        Assert.assertTrue(
-                responseBody.contains(expectedText),
-                "Response body does not contain: " + expectedText
-        );
-
-        System.out.println("✔ Response contains: " + expectedText);
->>>>>>> product
+        Assert.assertTrue(response.asString().contains(text),
+                "Response does not contain: " + text);
     }
 }

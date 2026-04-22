@@ -19,10 +19,10 @@ public class CommentsStepDefinition {
     String method;
     String endpoint;
     String body;
-    String token = null;   // ✅ FIX: Added token
+    String token = null;
 
     // =========================================
-    // 🔹 EXCEL BASED
+    // EXCEL BASED
     // =========================================
 
     @Given("I read comments test data {string}")
@@ -38,14 +38,9 @@ public class CommentsStepDefinition {
         endpoint = ConfiReader.get("base.url") + data.get("endpoint");
         body = data.get("testdata");
 
-        // handle empty body
         if (body != null && body.trim().isEmpty()) {
             body = null;
         }
-
-        System.out.println("METHOD: " + method);
-        System.out.println("ENDPOINT: " + endpoint);
-        System.out.println("BODY: " + body);
     }
 
     @And("I validate comments precondition")
@@ -56,14 +51,11 @@ public class CommentsStepDefinition {
     @When("I perform comments API request")
     public void performCommentsRequest() {
 
-        // ✅ FIX: Added token parameter
         response = ApiUtil.send(method, endpoint, body, token);
 
         if (response == null) {
             throw new RuntimeException("Response is NULL");
         }
-
-        System.out.println("RESPONSE: " + response.asString());
     }
 
     @Then("I validate comments expected result")
@@ -73,12 +65,10 @@ public class CommentsStepDefinition {
         int actual = response.getStatusCode();
 
         Assert.assertEquals(actual, expected, "Status code mismatch");
-
-        System.out.println("✔ Status validated");
     }
 
     // =========================================
-    // 🔹 GENERIC REQUEST (GET / DELETE)
+    // INLINE REQUESTS
     // =========================================
 
     @Given("I set comments request {string} {string}")
@@ -87,18 +77,12 @@ public class CommentsStepDefinition {
         method = reqMethod.toUpperCase();
         endpoint = ConfiReader.get("base.url") + reqEndpoint;
         body = null;
-
-        System.out.println("METHOD: " + method);
-        System.out.println("ENDPOINT: " + endpoint);
     }
 
     @When("I send comments request")
     public void sendCommentsRequest() {
 
-        // ✅ FIX
         response = ApiUtil.send(method, endpoint, body, token);
-
-        System.out.println("RESPONSE: " + response.asString());
     }
 
     @Then("I validate comments status {string}")
@@ -111,14 +95,13 @@ public class CommentsStepDefinition {
     }
 
     // =========================================
-    // 🔹 DATA TABLE (PUT)
+    // PUT (DATA TABLE)
     // =========================================
 
-    @When("I send PUT request with body:")
+    @When("I send comments PUT request with body:")
     public void sendPutRequest(DataTable table) {
 
-        List<Map<String, String>> rows = table.asMaps(String.class, String.class);
-        Map<String, String> row = rows.get(0);
+        Map<String, String> row = table.asMaps().get(0);
 
         String requestBody = "{\n" +
                 "\"body\":\"" + row.get("body") + "\",\n" +
@@ -126,56 +109,40 @@ public class CommentsStepDefinition {
                 "\"userId\":" + row.get("userId") + "\n" +
                 "}";
 
-        // ✅ FIX
         response = ApiUtil.send("PUT", endpoint, requestBody, token);
-
-        System.out.println("PUT RESPONSE: " + response.asString());
     }
 
     // =========================================
-    // 🔹 PATCH
+    // PATCH
     // =========================================
 
-    @When("I send PATCH request with body {string}")
+    @When("I send comments PATCH request with body {string}")
     public void sendPatchRequest(String bodyText) {
 
         String requestBody = "{ \"body\":\"" + bodyText + "\" }";
 
-        // ✅ FIX
         response = ApiUtil.send("PATCH", endpoint, requestBody, token);
-
-        System.out.println("PATCH RESPONSE: " + response.asString());
     }
 
     // =========================================
-    // 🔹 POST
+    // RESPONSE VALIDATION (UNIQUE)
     // =========================================
 
-    @When("I send POST request with body {string}")
-    public void sendPostRequest(String bodyText) {
-
-        // ✅ FIX
-        response = ApiUtil.send("POST", endpoint, bodyText, token);
-
-        System.out.println("POST RESPONSE: " + response.asString());
-    }
-
-    // =========================================
-    // 🔹 RESPONSE VALIDATIONS
-    // =========================================
-
-    @Then("Response body should contain {string}")
+    @Then("Comments response should contain {string}")
     public void validateResponseContains(String text) {
 
         Assert.assertTrue(response.asString().contains(text),
-                "Response does not contain expected text");
+                "Response does not contain expected text: " + text);
     }
+
+    // =========================================
+    // RESPONSE STRUCTURE
+    // =========================================
 
     @Then("Response body should contain comments array")
     public void validateCommentsArray() {
 
         JsonPath json = response.jsonPath();
-
         List<Object> comments = json.getList("comments");
 
         Assert.assertNotNull(comments, "Comments array is null");

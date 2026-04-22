@@ -4,26 +4,28 @@ import io.cucumber.java.en.*;
 import io.cucumber.datatable.DataTable;
 import io.restassured.response.Response;
 import io.restassured.path.json.JsonPath;
-
 import Utils.*;
 
 import java.util.Map;
+import java.util.List;
 
 import org.testng.Assert;
 
 public class TodosStepDefinition {
 
-    Map<String, String> data;
     Response response;
-
+    Map<String, String> data;
     String method;
     String endpoint;
+    String body;
+    String token = null;
 
-    // =========================
-    // EXCEL
-    // =========================
+    // =========================================
+    // EXCEL BASED
+    // =========================================
+
     @Given("I read todos test data {string}")
-    public void readData(String testCaseID) {
+    public void readTodosData(String testCaseID) {
 
         data = ExcelUtil.getData(testCaseID);
 
@@ -31,49 +33,55 @@ public class TodosStepDefinition {
             throw new RuntimeException("No data found for " + testCaseID);
         }
 
-        System.out.println("DATA: " + data);
+        method = data.get("method").toUpperCase();
+        endpoint = ConfiReader.get("base.url") + data.get("endpoint");
+        body = data.get("testdata");
+
+        if (body != null && body.trim().isEmpty()) {
+            body = null;
+        }
     }
 
     @And("I validate todos precondition")
     public void validatePrecondition() {
-        System.out.println("Precondition OK");
+        System.out.println("✔ Todos Precondition OK");
     }
 
     @When("I perform todos API request")
-    public void performRequest() {
+    public void performTodosRequest() {
 
-        method = data.getOrDefault("method", "GET");
-        String endpointPath = data.getOrDefault("endpoint", "/todos");
-        String body = data.get("testdata");
+        response = ApiUtil.send(method, endpoint, body, token);
 
-        endpoint = ConfiReader.get("base.url") + endpointPath;
-
-        response = ApiUtil.send(method, endpoint, body, null);
+        if (response == null) {
+            throw new RuntimeException("Response is NULL");
+        }
     }
 
     @Then("I validate todos expected result")
-    public void validateResult() {
+    public void validateExpectedResult() {
 
         int expected = Integer.parseInt(data.get("expectedstatus"));
         int actual = response.getStatusCode();
 
-        Assert.assertEquals(actual, expected);
+        Assert.assertEquals(actual, expected, "Status code mismatch");
     }
 
-    // =========================
-    // INLINE (GET & DELETE)
-    // =========================
-    @Given("I set todos request {string} {string}")
-    public void setRequest(String m, String e) {
+    // =========================================
+    // INLINE REQUESTS
+    // =========================================
 
-        method = m;
-        endpoint = ConfiReader.get("base.url") + e;
+    @Given("I set todos request {string} {string}")
+    public void setTodosRequest(String reqMethod, String reqEndpoint) {
+
+        method = reqMethod.toUpperCase();
+        endpoint = ConfiReader.get("base.url") + reqEndpoint;
+        body = null;
     }
 
     @When("I send todos request")
-    public void sendRequest() {
+    public void sendTodosRequest() {
 
-        response = ApiUtil.send(method, endpoint, null, null);
+        response = ApiUtil.send(method, endpoint, body, token);
     }
 
     @Then("I validate todos status {string}")
@@ -85,16 +93,63 @@ public class TodosStepDefinition {
         Assert.assertEquals(actual, expected);
     }
 
-    // =========================
-    // RESPONSE VALIDATION
-    // =========================
+    // =========================================
+    // PUT (DATA TABLE)
+    // =========================================
+
+    @When("I send todos PUT request with body:")
+    public void sendPutRequest(DataTable table) {
+
+        Map<String, String> row = table.asMaps().get(0);
+
+        String requestBody = "{\n" +
+                "\"todo\":\"" + row.get("todo") + "\",\n" +
+                "\"completed\":" + row.get("completed") + ",\n" +
+                "\"userId\":" + row.get("userId") + "\n" +
+                "}";
+
+        response = ApiUtil.send("PUT", endpoint, requestBody, token);
+    }
+
+    // =========================================
+    // PATCH
+    // =========================================
+
+    @When("I send todos PATCH request with body {string}")
+    public void sendPatchRequest(String text) {
+
+        String requestBody = "{ \"todo\":\"" + text + "\" }";
+
+        response = ApiUtil.send("PATCH", endpoint, requestBody, token);
+    }
+
+    // =========================================
+    // RESPONSE VALIDATION (UNIQUE)
+    // =========================================
+
+    @Then("Todos response should contain {string}")
+    public void validateResponseContains(String text) {
+
+        Assert.assertTrue(response.asString().contains(text),
+                "Response does not contain: " + text);
+    }
+
+    // =========================================
+    // RESPONSE STRUCTURE
+    // =========================================
+
     @Then("Response body should contain todos array")
     public void validateTodosArray() {
-        Assert.assertTrue(response.asString().contains("todos"));
+
+        JsonPath json = response.jsonPath();
+        List<Object> todos = json.getList("todos");
+
+        Assert.assertNotNull(todos);
+        Assert.assertTrue(todos.size() > 0);
     }
 
     @Then("Each todo should have {string}, {string}, {string}, {string}")
-    public void validateFields(String f1, String f2, String f3, String f4) {
+    public void validateTodoFields(String f1, String f2, String f3, String f4) {
 
         JsonPath json = response.jsonPath();
 
@@ -102,42 +157,5 @@ public class TodosStepDefinition {
         Assert.assertNotNull(json.get("todos[0]." + f2));
         Assert.assertNotNull(json.get("todos[0]." + f3));
         Assert.assertNotNull(json.get("todos[0]." + f4));
-    }
-
-    // =========================
-    // PUT (DataTable)
-    // =========================
-    @When("I send PUT request with body:")
-    public void sendPut(DataTable table) {
-
-        Map<String, String> map = table.asMaps().get(0);
-
-        String body = "{"
-                + "\"todo\":\"" + map.get("todo") + "\","
-                + "\"completed\":" + map.get("completed") + ","
-                + "\"userId\":" + map.get("userId")
-                + "}";
-
-        response = ApiUtil.send("PUT", endpoint, body, null);
-    }
-
-    // =========================
-    // PATCH
-    // =========================
-    @When("I send PATCH request with body {string}")
-    public void sendPatch(String text) {
-
-        String body = "{\"todo\":\"" + text + "\"}";
-
-        response = ApiUtil.send("PATCH", endpoint, body, null);
-    }
-
-    // =========================
-    // GENERIC RESPONSE CHECK
-    // =========================
-    @Then("Response body should contain {string}")
-    public void validateContains(String text) {
-
-        Assert.assertTrue(response.asString().contains(text));
     }
 }
